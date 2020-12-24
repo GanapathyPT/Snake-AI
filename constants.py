@@ -9,3 +9,4 @@ RIGHT = "RIGHT"
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+GREY = (66, 66, 66)

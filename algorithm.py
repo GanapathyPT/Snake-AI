@@ -36,8 +36,9 @@ def heuristic(pos_x, pos_y):
 	return abs(x1 - x2) + abs(y1 - y2)
 
 def get_shortest_path(game):
+	game.clear_search_path()
 	snake = game.snake
-	
+
 	grid = game.grid
 	start = snake[-1]
 	end = game.food
@@ -46,8 +47,7 @@ def get_shortest_path(game):
 	open_set = PriorityQueue()
 	open_set.put((0, count, start))
 
-	set_items = [start]
-
+	closed_set = [start]
 	from_list = {}
 
 	g_score = {col: float("inf") for row in grid for col in row}
@@ -58,13 +58,18 @@ def get_shortest_path(game):
 
 	while not open_set.empty():
 		current = open_set.get()[2]
-		set_items.remove(current)
+		closed_set.remove(current)
 
 		if current == end:
 			move_snake(game, from_list, start, end)
 			return True
 
 		for neighbour in current.get_neighbours(grid):
+			if neighbour.is_snake() and neighbour not in snake:
+				continue
+
+			neighbour.make_searching()
+
 			temp_g_score = g_score[current] + 1
 
 			if temp_g_score < g_score[neighbour]:
@@ -74,7 +79,7 @@ def get_shortest_path(game):
 				h_score = heuristic(neighbour.get_pos(), end.get_pos())
 				f_score[neighbour] = temp_g_score + h_score
 
-				if neighbour not in set_items:
+				if neighbour not in closed_set:
 					count += 1
 					open_set.put((f_score[neighbour], count, neighbour))
-					set_items.append(neighbour)
+					closed_set.append(neighbour)

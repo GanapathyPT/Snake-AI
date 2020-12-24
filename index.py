@@ -13,13 +13,15 @@ def main():
 
 	while running:
 		game.draw()
-		game.move_snake()
+		running = game.move_snake()
 		get_shortest_path(game)
-		
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
 
+			# uncomment for user as a player
+			'''
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_UP:
 					game.change_direction(UP)
@@ -32,8 +34,9 @@ def main():
 
 				elif event.key == pygame.K_RIGHT:
 					game.change_direction(RIGHT)
+			'''
 
-		timer.tick(10)
+		timer.tick(30)
 
 	pygame.quit()
 

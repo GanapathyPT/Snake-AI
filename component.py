@@ -39,6 +39,12 @@ class Item():
 			(self.x, self.y, self.ITEM_WIDTH, self.ITEM_WIDTH)	 
 		)
 
+	def is_snake(self):
+		return self.color == BLACK
+
+	def is_searching(self):
+		return self.color == GREY
+
 	def make_defaut(self):
 		self.color = WHITE
 
@@ -48,22 +54,25 @@ class Item():
 	def make_food(self):
 		self.color = RED
 
+	def make_searching(self):
+		self.color = GREY
+
 	def get_pos(self):
 		return self.row, self.col
 
 	def get_neighbours(self, grid):
 		neighbours = []
 
-		if self.row > 0:
+		if self.row > 0 and not grid[self.row - 1][self.col].is_snake():
 			neighbours.append(grid[self.row - 1][self.col])
 
-		if self.row < ROWS - 1:
+		if (self.row < ROWS - 1) and not grid[self.row + 1][self.col].is_snake():
 			neighbours.append(grid[self.row + 1][self.col])
 
-		if self.col > 0:
+		if self.col > 0 and not grid[self.row][self.col - 1].is_snake():
 			neighbours.append(grid[self.row][self.col - 1])
 
-		if self.col < ROWS - 1:
+		if (self.col < ROWS - 1) and not grid[self.row][self.col + 1].is_snake():
 			neighbours.append(grid[self.row][self.col + 1])
 
 		return neighbours
@@ -110,14 +119,33 @@ class Game():
 		self.food.make_food()
 		self.food.draw()
 
+	def _draw_score(self):
+		text = pygame.font.SysFont("Comic Sans MS", 25)
+		surface = text.render(f"Score : {self.score}", False, BLACK)
+		self.screen.blit(surface, (10, 10))
+ 
 	def draw(self):
 		for row in self.grid:
 			for col in row:
-				col.make_defaut()
+				if not col.is_searching():
+					col.make_defaut()
 				col.draw()
 		
 		self._draw_snake()
 		self._draw_food()
+		self._draw_score()
+		pygame.display.update()
+
+	def clear_search_path(self):
+		for row in self.grid:
+			for col in row:
+				if col.is_searching():
+					col.make_defaut()
+				col.draw()
+		
+		self._draw_snake()
+		self._draw_food()
+		self._draw_score()
 		pygame.display.update()
 
 	def refresh_food_pos(self):
@@ -134,35 +162,41 @@ class Game():
 		(self.direction == RIGHT and direction != LEFT):
 			self.direction = direction
 
-	# this function is not working
-	# donno why
-	def check_errors(self, head):
-		if head < (0, 0) and head > (ROWS - 1, ROWS - 1):
-			pygame.quit()
-		for item in self.snake[1:]:
-			if item == head:
-				pygame.quit()
-
 	def move_snake(self):
 		row, col = self.snake[-1].get_pos()
 		head = None
 
 		if self.direction == UP:
-			head = self.grid[row][col - 1]
+			col -= 1
 
 		elif self.direction == DOWN:
-			head = self.grid[row][col + 1]
+			col += 1
 
 		elif self.direction == LEFT:
-			head = self.grid[row - 1][col]
+			row -= 1
 
 		elif self.direction == RIGHT:
-			head = self.grid[row + 1][col]
+			row += 1
 
-		# self.check_errors(head)
+		if row < 0 or row > ROWS - 1 or \
+		col < 0 or col > ROWS - 1:
+			print("snake hits on wall")
+			return False
+
+		head = self.grid[row][col]
+
+		# for item in self.snake:
+		# 	item_row, item_col = item.get_pos()
+		# 	if item_row == row and item_col == col:
+		# 		print(head)
+		# 		print(*self.snake, sep="\n")
+		# 		print("snake collapsed")
+		# 		return False
 
 		self.snake.append(head)
 		if head == self.food:
 			self.increment_score()
 		else:
 			self.snake.pop(0)
+
+		return True
