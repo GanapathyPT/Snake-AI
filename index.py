@@ -1,9 +1,10 @@
 import pygame
-from constants import *
-from component import *
+from constants import WIDTH
+from component import Game
 from algorithm import get_shortest_path
 
 pygame.init()
+pygame.display.set_caption("Snake AI")
 screen = pygame.display.set_mode([ WIDTH, WIDTH ])
 timer = pygame.time.Clock()
 
@@ -12,8 +13,6 @@ def main():
 	game = Game(screen)
 
 	while running:
-		game.draw()
-		running = game.move_snake()
 		get_shortest_path(game)
 
 		for event in pygame.event.get():
@@ -36,7 +35,7 @@ def main():
 					game.change_direction(RIGHT)
 			'''
 
-		timer.tick(30)
+		timer.tick(5)
 
 	pygame.quit()
 
