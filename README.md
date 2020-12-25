@@ -8,10 +8,14 @@ make sure python is installed on your computer
 python --version
 Python 3.6.9
 ```
-install pygame module using pip (python package installer)
+ensure that pip is available
 ```bash
 pip --version
 pip 20.3.3
+```
+install pygame module using pip (python package installer)
+```bash
+pip install pygame
 ```
 ## usage
 clone the project and change the directory
