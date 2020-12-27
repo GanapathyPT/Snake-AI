@@ -59,6 +59,22 @@ class Item():
 	def get_pos(self):
 		return self.row, self.col
 
+	def draw_path(self, direction):
+		x1, y1 = self.x, self.y
+		x2, y2 = self.x, self.y
+		if direction == UP or direction == DOWN:
+			x1 += (self.ITEM_WIDTH // 2)
+			x2 += (self.ITEM_WIDTH // 2)
+			y2 += self.ITEM_WIDTH
+
+		elif direction == LEFT or direction == RIGHT:
+			y1 += (self.ITEM_WIDTH // 2)
+			y2 += (self.ITEM_WIDTH // 2)
+			x2 += self.ITEM_WIDTH
+
+		pygame.draw.line(self.screen, LINE_COLOR, (x1, y1), (x2, y2))
+		pygame.display.update()
+
 	# getting all the neighbours of a item which is not a snake part
 	def get_neighbours(self, grid):
 		neighbours = []

@@ -24,9 +24,18 @@ def get_path(from_list, start, end):
 	path.reverse()
 	return path
 
+# visualizing path for testing
+def visualize_path(path, start):
+	for item in path:
+		direction = get_direction(start, item)
+		item.draw_path(direction)
+		start = item
+
 # handling the output of the algorithm
 def move_snake(game, from_list, start, end):
 	path = get_path(from_list, start, end)
+	# for testing
+	# visualize_path(path, start)
 	for item in path:
 		direction = get_direction(start, item)
 		game.change_direction(direction)
